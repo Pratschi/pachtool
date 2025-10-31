@@ -1,5 +1,5 @@
 pdata = {
-    "version": "1.0",
+    "version": 1.0,
     "cmdlist": {
         "quit": "Exit program",
         "help": "Show command list",
@@ -8,7 +8,7 @@ pdata = {
     },
     "extensions": {},
     "extpath": [],
-    "debugmode": False,
+    "debugmode": True,
 }
 
 def savedata(confirmation:bool=True, sdata=None, hide=False, force=False):
@@ -81,13 +81,8 @@ def giveerror(type:str, error:str, cmd:str):
     else:
         raise Exception("Invalid error type!")
 
-def main():
-    print("\nLoading PachTool...")
+def loaddata():
     import os, json
-    extensions = {}
-    unknown_used = False
-    unknown_show = False    
-
     if os.path.isfile("shelltool_data.json") and input("Old data save detected, load data? (y/n) > ").lower() == "y":
         print("Loading data...")
         try:
@@ -99,15 +94,23 @@ def main():
                     if i not in data:
                         data[i] = pdata[i]
                 savedata(confirmation=False, sdata=data, hide=True, force=True)
+            return data
         except json.decoder.JSONDecodeError:
             print("ERROR: Failed to load data, file is corrupted!\nLoading default data...")
-            data = pdata
+            return pdata
         except Exception as e:
             print(f"ERROR: Failed to load data: {e}\nLoading default data...")
-            data = pdata
+            return pdata
     else:
-        data = pdata
+        return pdata
 
+def main():
+    print("\nLoading PachTool...")
+    import os
+    extensions = {}
+    unknown_used = False
+    unknown_show = False    
+    data = loaddata()
     print(f"\nPachTool v{data['version']} {'[DEBUG MODE] ' if data['debugmode'] else ''}- Made by Pratschi\ngithub.com/Pratschi/PachTool | replit.com/@Pratschi/PachTool")
     while True:
         if not unknown_used:
@@ -142,8 +145,8 @@ def main():
                     for i in data["extensions"]:
                         try:
                             with open(data["extensions"][i]["file"], "r") as f:
-                                content = f.read()
                                 firstline = f.readline().strip()
+                                content = f.read()
                                 data["extensions"][i]["name"] = firstline.split("/")[4]
                                 data["extensions"][i]["version"] = firstline.split("/")[3]
                                 data["extensions"][i]["author"] = firstline.split("/")[2]
@@ -279,12 +282,15 @@ def main():
             elif cmd["args"][0] == "save":
                 savedata(confirmation=False, sdata=data, hide=True, force=True)
         elif cmd["cmd"] in data["extpath"]:
-            try:
-                exec(data["extensions"][[cmd["cmd"]]]["code"], {"__name__": "__main__", "extargs": {"args": cmd["args"], "flags": cmd["flags"], "longflags": cmd["longflags"]}})
-            except KeyboardInterrupt:
-                print(f"\nExited extension {cmd['args'][1]}.")
-            except Exception as e:
-                print(f"\nAn error occured while running extension '{cmd['args'][1]}'\nERROR: {e}")
+            if data["debugmode"]:
+                exec(data["extensions"][cmd["cmd"]]["code"], {"__name__": "__main__", "extargs": {"args": cmd["args"], "flags": cmd["flags"], "longflags": cmd["longflags"]}})
+            else:
+                try:
+                    exec(data["extensions"][cmd["cmd"]]["code"], {"__name__": "__main__", "extargs": {"args": cmd["args"], "flags": cmd["flags"], "longflags": cmd["longflags"]}})
+                except KeyboardInterrupt:
+                    print(f"\nExited extension {cmd['cmd']}.")
+                except Exception as e:
+                    print(f"\nAn error occured while running extension '{cmd['cmd']}'\nERROR: {e}")
         else:
             if not unknown_show:
                 print("Unknown command!")
