@@ -1,4 +1,4 @@
-# PachTool Extension /fm/Pratschi/1.0.0/Pratchi's File Manager/
+# PachTool Extension /fm/Pratschi/0.1/Pratchi's File Manager/
 
 print("Loading File Manager...")
 import os, json
