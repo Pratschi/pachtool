@@ -18,7 +18,7 @@ def savedata(confirmation:bool=True, sdata=None, hide=False, force=False):
         if not confirmation or input("\nSave data? (y/n) > ").lower() == "y":
             if not hide:
                 print("Saving data...")
-            with open("shelltool_data.json", "w") as f:
+            with open("pachtool_data.json", "w") as f:
                 json.dump(sdata, f, indent=4)
         if not hide:
             print("Data correctly saved!")
