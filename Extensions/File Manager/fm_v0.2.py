@@ -11,9 +11,12 @@ while True:
         if len(cmd.split(" ")) == 1:
             currpath = os.getcwd()
         else:
-            if cmd.split(" ")[1] == "..":
-                currpath = os.path.dirname(currpath)
-            elif (cmd.split(" ")[1].startswith("/") or cmd.split(" ")[1].startswith("\\")) and os.path.isdir(cmd.split(" ")[1]):
+            if cmd.split(" ")[1].startswith(".."):
+                for i in range(len(cmd.split(" ")[1].split("..")) - 1):
+                    currpath = os.path.dirname(currpath)
+            elif (cmd.split(" ")[1].startswith("/")
+                  or cmd.split(" ")[1].startswith("\\")) and os.path.isdir(
+                      cmd.split(" ")[1]):
                 currpath = cmd.split(" ")[1]
             elif os.path.isdir(os.path.join(currpath, cmd.split(" ")[1])):
                 currpath = os.path.join(currpath, cmd.split(" ")[1])
@@ -25,14 +28,22 @@ while True:
         if len(cmd.split(" ")) > 1:
             if os.path.exists(os.path.join(currpath, cmd.split(" ")[1])):
                 for i in os.listdir(os.path.join(currpath, cmd.split(" ")[1])):
-                    print(f"    {i}{' (Folder)' if os.path.isdir(os.path.join(currpath, i)) else ''}")
+                    print(
+                        f"    {i}{' (Folder)' if os.path.isdir(os.path.join(currpath, i)) else ''}"
+                    )
             elif os.path.isfile(os.path.join(currpath, cmd.split(" ")[1])):
-                print(f"[FM] ERROR: {os.path.join(currpath, cmd.split(' ')[1])} Is a file!")
+                print(
+                    f"[FM] ERROR: {os.path.join(currpath, cmd.split(' ')[1])} Is a file!"
+                )
             else:
-                print(f"[FM] ERROR: {os.path.join(currpath, cmd.split(' ')[1])} Folder doesn't exist!")
+                print(
+                    f"[FM] ERROR: {os.path.join(currpath, cmd.split(' ')[1])} Folder doesn't exist!"
+                )
         else:
             for i in os.listdir(currpath):
-                print(f"    {i}{' (Folder)' if os.path.isdir(os.path.join(currpath, i)) else ''}")
+                print(
+                    f"    {i}{' (Folder)' if os.path.isdir(os.path.join(currpath, i)) else ''}"
+                )
     elif cmd.startswith("quit"):
         break
     else:
