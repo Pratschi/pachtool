@@ -8,7 +8,7 @@ pdata = {
     },
     "extensions": {},
     "extpath": [],
-    "debugmode": True,
+    "debugmode": False,
 }
 
 def savedata(confirmation:bool=True, sdata=None, hide=False, force=False):
